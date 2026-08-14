@@ -22,19 +22,21 @@ jobs:
         with:
           channel: 'stable'
 
+      - name: Prepare Proper Flutter Structure
+        run: |
+          # Create necessary flutter directories
+          mkdir -p lib android/app
+          
+          # Move dart files to lib if they are in root
+          mv *.dart lib/ 2>/dev/null || true
+          
+          # If build.gradle exists in root, move it to android/app/
+          if [ -f "build.gradle" ]; then
+            cp build.gradle android/app/
+          fi
+
       - name: Install dependencies
         run: flutter pub get
-
-      - name: Organize Project Structure
-        run: |
-          mkdir -p lib
-          # Move all dart files from root to lib if they exist there
-          find . -maxdepth 1 -name "*.dart" -exec cp {} lib/ \;
-          # Create folders if referenced and move corresponding files if any
-          mkdir -p lib/theme lib/screens lib/services
-          if [ -f "app_theme.dart" ]; then cp app_theme.dart lib/theme/; fi
-          if [ -f "chat_screen.dart" ]; then cp chat_screen.dart lib/screens/; fi
-          if [ -f "settings_screen.dart" ]; then cp settings_screen.dart lib/screens/; fi
 
       - name: Build APK
         run: flutter build apk --release -t lib/main.dart
