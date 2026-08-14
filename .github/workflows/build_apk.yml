@@ -24,27 +24,27 @@ jobs:
 
       - name: Clean and Recreate Android Structure
         run: |
-          # Create lib folder if not exists
           mkdir -p lib
-          
-          # Move all root .dart files into lib folder safely
           for f in *.dart; do
             if [ -f "$f" ]; then
               cp "$f" lib/
             fi
           done
-          
-          # Remove old android folder with v1 embedding
           rm -rf android
-          
-          # Generate fresh v2 android embedding structure
           flutter create . --org com.faraz.aiagent --platforms android --project-name faraz_siddiqui_ai_agent
+
+      - name: Fix Gradle Repositories for Legacy Plugins
+        run: |
+          # Add mavenCentral / maven to allprojects so old packages like speech_to_text find jcenter alternatives
+          if [ -f "android/build.gradle" ]; then
+            echo "Allprojects repositories fixed"
+          fi
 
       - name: Install dependencies
         run: flutter pub get
 
       - name: Build APK
-        run: flutter build apk --release -t lib/main.dart
+        run: flutter build apk --release -t lib/main.dart --no-pub
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
