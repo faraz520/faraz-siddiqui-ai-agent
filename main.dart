@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'theme/app_theme.dart';
-import 'screens/chat_screen.dart';
+// یہاں ہم نے فولڈر کے نام ہٹا دیے ہیں کیونکہ فائلیں سیدھی موجود ہیں
+import 'app_theme.dart'; 
+import 'chat_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,10 +21,11 @@ class FarazAIAgentApp extends StatelessWidget {
     return MaterialApp(
       title: 'Faraz Siddiqui AI Agent',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
+      // یہ آپ کی ایپ کے تھیم کو درست کرے گا
+      theme: AppTheme.lightTheme, 
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.dark,
-      home: ChatScreen(),
+      home: const ChatScreen(),
     );
   }
 }
