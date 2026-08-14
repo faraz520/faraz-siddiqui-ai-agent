@@ -29,13 +29,10 @@ jobs:
           rm -rf android
           flutter create . --org com.faraz.aiagent --platforms android --project-name faraz_siddiqui_ai_agent
 
-      - name: Force Fix JCenter issue
+      - name: Clear Pub Cache and Get Dependencies
         run: |
-          # Replace jcenter() with mavenCentral() in all build.gradle files
-          find android -name "build.gradle" -exec sed -i 's/jcenter()/mavenCentral()/g' {} +
-
-      - name: Install dependencies
-        run: flutter pub get
+          flutter pub cache clean -f
+          flutter pub get
 
       - name: Build APK
         run: flutter build apk --release -t lib/main.dart
