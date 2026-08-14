@@ -25,12 +25,19 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Create Android Scaffolding
+      - name: Organize Project Structure
         run: |
-          flutter create . --org com.faraz.aiagent --platforms android --project-name faraz_siddiqui_ai_agent --overwrite
+          mkdir -p lib
+          # Move all dart files from root to lib if they exist there
+          find . -maxdepth 1 -name "*.dart" -exec cp {} lib/ \;
+          # Create folders if referenced and move corresponding files if any
+          mkdir -p lib/theme lib/screens lib/services
+          if [ -f "app_theme.dart" ]; then cp app_theme.dart lib/theme/; fi
+          if [ -f "chat_screen.dart" ]; then cp chat_screen.dart lib/screens/; fi
+          if [ -f "settings_screen.dart" ]; then cp settings_screen.dart lib/screens/; fi
 
       - name: Build APK
-        run: flutter build apk --release -t main.dart
+        run: flutter build apk --release -t lib/main.dart
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
