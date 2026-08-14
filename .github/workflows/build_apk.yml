@@ -25,26 +25,20 @@ jobs:
       - name: Clean and Recreate Android Structure
         run: |
           mkdir -p lib
-          for f in *.dart; do
-            if [ -f "$f" ]; then
-              cp "$f" lib/
-            fi
-          done
+          for f in *.dart; do if [ -f "$f" ]; then cp "$f" lib/; fi; done
           rm -rf android
           flutter create . --org com.faraz.aiagent --platforms android --project-name faraz_siddiqui_ai_agent
 
-      - name: Fix Gradle Repositories for Legacy Plugins
+      - name: Force Fix JCenter issue
         run: |
-          # Add mavenCentral / maven to allprojects so old packages like speech_to_text find jcenter alternatives
-          if [ -f "android/build.gradle" ]; then
-            echo "Allprojects repositories fixed"
-          fi
+          # Replace jcenter() with mavenCentral() in all build.gradle files
+          find android -name "build.gradle" -exec sed -i 's/jcenter()/mavenCentral()/g' {} +
 
       - name: Install dependencies
         run: flutter pub get
 
       - name: Build APK
-        run: flutter build apk --release -t lib/main.dart --no-pub
+        run: flutter build apk --release -t lib/main.dart
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
