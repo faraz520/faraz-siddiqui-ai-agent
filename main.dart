@@ -22,7 +22,7 @@ class FarazAIAgentApp extends StatelessWidget {
       title: 'Faraz Siddiqui AI Agent',
       debugShowCheckedModeBanner: false,
       // یہ آپ کی ایپ کے تھیم کو درست کرے گا
-      theme: AppTheme.lightTheme, 
+      theme: AppTheme.darkTheme, 
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.dark,
       home: const ChatScreen(),
