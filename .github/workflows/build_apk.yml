@@ -25,6 +25,11 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Create Android Structure if missing
+        run: |
+          mkdir -p android/app
+          if [ -f "build.gradle" ]; then cp build.gradle android/app/; fi
+
       - name: Build APK
         run: flutter build apk --release -t main.dart
 
