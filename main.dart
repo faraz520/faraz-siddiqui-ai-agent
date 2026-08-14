@@ -23,7 +23,7 @@ class FarazAIAgentApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.dark,
-      home: const ChatScreen(),
+      home: ChatScreen(),
     );
   }
 }
