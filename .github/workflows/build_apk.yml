@@ -22,13 +22,6 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Clean and Recreate Android Structure
-        run: |
-          mkdir -p lib
-          for f in *.dart; do if [ -f "$f" ]; then cp "$f" lib/; fi; done
-          rm -rf android
-          flutter create . --org com.faraz.aiagent --platforms android --project-name faraz_siddiqui_ai_agent
-
       - name: Clear Pub Cache and Get Dependencies
         run: |
           flutter pub cache clean -f
