@@ -11,16 +11,7 @@ class AppTheme {
       brightness: Brightness.dark,
       scaffoldBackgroundColor: darkBackground,
       primaryColor: primaryColor,
-      colorScheme: const ColorScheme.dark(
-        primary: primaryColor,
-        surface: darkCardBackground,
-      ),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: darkBackground,
-        elevation: 0,
-        centerTitle: true,
-      ),
-      cardTheme: const CardTheme(
+      cardTheme: CardThemeData(
         color: darkCardBackground,
         elevation: 2,
       ),
