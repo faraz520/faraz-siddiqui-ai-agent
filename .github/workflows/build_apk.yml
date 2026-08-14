@@ -22,18 +22,23 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Prepare Proper Flutter Structure
+      - name: Clean and Recreate Android Structure
         run: |
-          # Create necessary flutter directories
-          mkdir -p lib android/app
+          # Create lib folder if not exists
+          mkdir -p lib
           
-          # Move dart files to lib if they are in root
-          mv *.dart lib/ 2>/dev/null || true
+          # Move all root .dart files into lib folder safely
+          for f in *.dart; do
+            if [ -f "$f" ]; then
+              cp "$f" lib/
+            fi
+          done
           
-          # If build.gradle exists in root, move it to android/app/
-          if [ -f "build.gradle" ]; then
-            cp build.gradle android/app/
-          fi
+          # Remove old android folder with v1 embedding
+          rm -rf android
+          
+          # Generate fresh v2 android embedding structure
+          flutter create . --org com.faraz.aiagent --platforms android --project-name faraz_siddiqui_ai_agent
 
       - name: Install dependencies
         run: flutter pub get
