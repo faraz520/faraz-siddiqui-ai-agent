@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../models/message.dart';
-import '../services/gemini_service.dart';
-import '../services/secure_storage_service.dart';
+import 'message.dart';
+import 'gemini_service.dart';
+import 'secure_storage_service.dart';
 import 'settings_screen.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -42,8 +42,8 @@ class _ChatScreenState extends State<ChatScreen> {
       _messages.add(
         Message(
           id: DateTime.now().toString(),
-          text: "Assalamu Alaikum Faraz! I am your permanent AI Agent. How can I assist you with HSE reports, CV, Urdu translation, or content planning today?",
-          role: "assistant",
+          text: "Assalamu Alaikum Faraz! I am your permanent AI Agent. How can I assist you with HSE reports, CV, Urdu/English translations, or video script creation?",
+          role: 'assistant',
           timestamp: DateTime.now(),
         ),
       );
@@ -143,7 +143,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.8),
                     decoration: BoxDecoration(
-                      color: isUser ? const Color(0xFF0D9488) : const Color(0xFF1E293B),
+                      color: isUser ? const Color(0xFF10B981) : const Color(0xFF1E293B),
                       borderRadius: BorderRadius.circular(16),
                       border: isUser ? null : Border.all(color: const Color(0xFF334155)),
                     ),
@@ -161,7 +161,6 @@ class _ChatScreenState extends State<ChatScreen> {
               padding: EdgeInsets.all(8.0),
               child: LinearProgressIndicator(color: Color(0xFF10B981)),
             ),
-          // Input Bar
           Container(
             padding: const EdgeInsets.all(12),
             color: const Color(0xFF0F172A),
