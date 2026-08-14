@@ -25,10 +25,9 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Create Android Structure if missing
+      - name: Create Android Scaffolding
         run: |
-          mkdir -p android/app
-          if [ -f "build.gradle" ]; then cp build.gradle android/app/; fi
+          flutter create . --org com.faraz.aiagent --platforms android --project-name faraz_siddiqui_ai_agent --overwrite
 
       - name: Build APK
         run: flutter build apk --release -t main.dart
