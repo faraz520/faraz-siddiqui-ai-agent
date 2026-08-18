@@ -40,10 +40,15 @@ jobs:
             flutter create --platforms=android --project-name faraz_siddiqui_ai_agent .
           fi
 
-      - name: Apply verified Android app configuration
+      - name: Validate Android build inputs
         shell: bash
         run: |
           set -euo pipefail
+          test -f build.gradle
+          test -f gradle.properties
+          test -f AndroidManifest.xml
+          test -f pubspec.yaml
+          test -f lib/main.dart
           mkdir -p android/app/src/main
           cp build.gradle android/app/build.gradle
           cp gradle.properties android/gradle.properties
