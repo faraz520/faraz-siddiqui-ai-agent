@@ -112,20 +112,32 @@ jobs:
           disable-animations: true
           emulator-options: -no-window -no-audio -no-boot-anim
           script: |
-            set -e
-            adb install -r android/app/build/outputs/apk/release/app-release.apk
-            adb shell am force-stop com.farazsiddiqui.aiagent
-            adb shell monkey -p com.farazsiddiqui.aiagent 1
+            set -euo pipefail
+            APK="android/app/build/outputs/apk/release/app-release.apk"
+            PACKAGE="com.farazsiddiqui.aiagent"
+            adb install -r "$APK"
+            adb shell am force-stop "$PACKAGE"
+            adb logcat -c
+            adb shell monkey -p "$PACKAGE" 1
             sleep 12
-            adb shell pidof com.farazsiddiqui.aiagent || true
+            adb shell pidof "$PACKAGE" > /tmp/faraz-pid.txt 2>/dev/null || true
             adb logcat -d -v time > /tmp/faraz-app-log.txt
-            if grep -E "FATAL EXCEPTION|AndroidRuntime.*FATAL|Process: com.farazsiddiqui.aiagent" /tmp/faraz-app-log.txt; then
-              echo "Release APK crashed during startup. Relevant logcat follows."
+            echo "===== APP PROCESS ====="
+            cat /tmp/faraz-pid.txt || true
+            echo "===== RELEVANT STARTUP LOG ====="
+            grep -E "FATAL EXCEPTION|AndroidRuntime|Process: com.farazsiddiqui.aiagent|flutter|Exception" /tmp/faraz-app-log.txt || true
+            if grep -qE "FATAL EXCEPTION|Process: com.farazsiddiqui.aiagent" /tmp/faraz-app-log.txt; then
+              echo "Release APK crashed during startup."
+              exit 1
+            fi
+            if [ ! -s /tmp/faraz-pid.txt ]; then
+              echo "Release APK process is not running after launch."
               exit 1
             fi
             echo "Release APK startup smoke test passed."
 
       - name: Upload verified APK
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: Faraz-Siddiqui-AI-Agent-Release-APK
