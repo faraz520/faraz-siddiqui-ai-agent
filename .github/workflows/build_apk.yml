@@ -38,6 +38,7 @@ jobs:
           set -euo pipefail
           if [ ! -d android ]; then
             flutter create --platforms=android --project-name faraz_siddiqui_ai_agent .
+            rm -f test/widget_test.dart
           fi
 
       - name: Validate Android build inputs
