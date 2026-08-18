@@ -1,11 +1,8 @@
 import 'package:google_generative_ai/google_generative_ai.dart';
-import 'secure_storage_service.dart';
 
 class GeminiService {
-  final SecureStorageService _storage = SecureStorageService();
-
-  static const String systemPrompt =
-      'You are Faraz Siddiqui AI Agent, the dedicated personal assistant for Faraz Siddiqui. Help with HSE reports, CV improvement, Urdu/English translations, and video script creation. Maintain privacy and high accuracy.';
+  static const systemPrompt =
+      'You are Faraz Siddiqui AI Agent, the dedicated personal assistant for Faraz Siddiqui. Help with HSE reports, CV improvement, Urdu and English translations, and video script creation. Maintain privacy and high accuracy.';
 
   Future<String> sendMessage({
     required String prompt,
@@ -13,14 +10,9 @@ class GeminiService {
     String? mode,
   }) async {
     try {
-      final storedKey = await _storage.getApiKey();
-      const buildKey = String.fromEnvironment('GEMINI_API_KEY');
-      final apiKey = (storedKey != null && storedKey.isNotEmpty)
-          ? storedKey
-          : buildKey;
-
+      const apiKey = String.fromEnvironment('GEMINI_API_KEY');
       if (apiKey.isEmpty) {
-        return 'Gemini API key is not configured. Add it in the app settings or provide GEMINI_API_KEY at build time.';
+        return 'Gemini API key is not configured. Build with GEMINI_API_KEY or add API-key configuration in the app settings.';
       }
 
       final model = GenerativeModel(
