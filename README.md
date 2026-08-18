@@ -20,10 +20,7 @@ Permanent Personal Digital Assistant customized for **Faraz Siddiqui** — HSE S
 
 ### Local Execution
 ```bash
-# 1. Fetch dependencies
 flutter pub get
-
-# 2. Run on Android Device / Emulator
 flutter run -d android
 ```
 
@@ -37,3 +34,5 @@ The generated APK will be available at `build/app/outputs/flutter-apk/app-releas
 This project includes preconfigured CI/CD workflows:
 - **Codemagic**: See `codemagic.yaml` for automated APK builds.
 - **GitHub Actions**: See `.github/workflows/build_apk.yml` for automated building on every push.
+
+<!-- APK-BUILD-TRIGGER: 2026-08-18 -->
