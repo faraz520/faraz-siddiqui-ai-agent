@@ -1,16 +1,34 @@
+import 'dart:async';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-// یہاں ہم نے فولڈر کے نام ہٹا دیے ہیں کیونکہ فائلیں سیدھی موجود ہیں
-import 'app_theme.dart'; 
+import 'app_theme.dart';
 import 'chat_screen.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(
-    const ProviderScope(
-      child: FarazAIAgentApp(),
-    ),
-  );
+
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.presentError(details);
+  };
+
+  PlatformDispatcher.instance.onError = (Object error, StackTrace stack) {
+    debugPrint('Unhandled platform error: $error');
+    debugPrintStack(stackTrace: stack);
+    return true;
+  };
+
+  runZonedGuarded(() {
+    runApp(
+      const ProviderScope(
+        child: FarazAIAgentApp(),
+      ),
+    );
+  }, (Object error, StackTrace stack) {
+    debugPrint('Unhandled startup error: $error');
+    debugPrintStack(stackTrace: stack);
+  });
 }
 
 class FarazAIAgentApp extends StatelessWidget {
@@ -21,8 +39,7 @@ class FarazAIAgentApp extends StatelessWidget {
     return MaterialApp(
       title: 'Faraz Siddiqui AI Agent',
       debugShowCheckedModeBanner: false,
-      // یہ آپ کی ایپ کے تھیم کو درست کرے گا
-      theme: AppTheme.darkTheme, 
+      theme: AppTheme.darkTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.dark,
       home: const ChatScreen(),
