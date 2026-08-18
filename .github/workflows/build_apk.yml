@@ -13,7 +13,7 @@ permissions:
 jobs:
   build-release-apk:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
 
     steps:
       - name: Checkout source
@@ -101,6 +101,29 @@ jobs:
           ls -lh "$APK"
           mkdir -p release
           cp "$APK" release/Faraz_Siddiqui_AI_Agent_v1.0.0.apk
+
+      - name: Smoke test release APK on Android emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          disable-animations: true
+          emulator-options: -no-window -no-audio -no-boot-anim
+          script: |
+            set -e
+            adb install -r android/app/build/outputs/apk/release/app-release.apk
+            adb shell am force-stop com.farazsiddiqui.aiagent
+            adb shell monkey -p com.farazsiddiqui.aiagent 1
+            sleep 12
+            adb shell pidof com.farazsiddiqui.aiagent || true
+            adb logcat -d -v time > /tmp/faraz-app-log.txt
+            if grep -E "FATAL EXCEPTION|AndroidRuntime.*FATAL|Process: com.farazsiddiqui.aiagent" /tmp/faraz-app-log.txt; then
+              echo "Release APK crashed during startup. Relevant logcat follows."
+              exit 1
+            fi
+            echo "Release APK startup smoke test passed."
 
       - name: Upload verified APK
         uses: actions/upload-artifact@v4
