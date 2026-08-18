@@ -40,9 +40,6 @@ jobs:
             flutter create --platforms=android --project-name faraz_siddiqui_ai_agent .
             rm -f test/widget_test.dart
           fi
-          # The repository's source-of-truth app module uses Groovy build.gradle.
-          # Flutter's generated project may also contain app/build.gradle.kts; remove
-          # it so Gradle cannot select the generated Kotlin DSL file instead.
           rm -f android/app/build.gradle.kts
 
       - name: Validate Android build inputs
@@ -66,7 +63,6 @@ jobs:
 
           class MainActivity : FlutterActivity()
           EOF
-          # Force every Android subproject/plugin to compile against SDK 36.
           cat >> android/build.gradle <<'EOF'
 
           subprojects {
@@ -84,18 +80,21 @@ jobs:
       - name: Analyze application Dart sources
         run: flutter analyze lib
 
-      - name: Build Android Release APK
+      - name: Build Android Release APK with Gradle
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        shell: bash
         run: |
           set -euo pipefail
-          flutter build apk --release --target lib/main.dart --dart-define=GEMINI_API_KEY="$GEMINI_API_KEY"
+          cd android
+          chmod +x gradlew
+          ./gradlew --no-daemon --stacktrace app:assembleRelease
 
       - name: Verify APK integrity
         shell: bash
         run: |
           set -euo pipefail
-          APK="build/app/outputs/flutter-apk/app-release.apk"
+          APK="android/app/build/outputs/apk/release/app-release.apk"
           test -s "$APK"
           file "$APK"
           unzip -t "$APK" >/dev/null
