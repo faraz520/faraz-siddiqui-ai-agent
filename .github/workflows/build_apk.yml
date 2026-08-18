@@ -1,61 +1,82 @@
-name: Flutter Android APK Build
+name: Faraz Siddiqui AI Agent - Android Release APK
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [main]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
-  build:
+  build-release-apk:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Set up Java JDK 17
+      - name: Set up Java 17
         uses: actions/setup-java@v5
         with:
-          distribution: 'zulu'
+          distribution: temurin
           java-version: '17'
+          cache: gradle
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
+          channel: stable
+          cache: true
 
-      - name: Restore Android platform structure
+      - name: Restore Android project
         shell: bash
         run: |
-          set -e
+          set -euo pipefail
           if [ ! -d android ]; then
             flutter create --platforms=android --project-name faraz_siddiqui_ai_agent .
           fi
-
           mkdir -p android/app/src/main
           cp build.gradle android/app/build.gradle
           cp settings.gradle android/settings.gradle
           cp gradle.properties android/gradle.properties
           cp AndroidManifest.xml android/app/src/main/AndroidManifest.xml
-
-          rm -rf android/app/src/main/kotlin
           mkdir -p android/app/src/main/kotlin/com/farazsiddiqui/aiagent
           cat > android/app/src/main/kotlin/com/farazsiddiqui/aiagent/MainActivity.kt <<'EOF'
           package com.farazsiddiqui.aiagent
-
           import io.flutter.embedding.android.FlutterActivity
-
           class MainActivity : FlutterActivity()
           EOF
 
-      - name: Get Flutter dependencies
+      - name: Resolve dependencies
         run: flutter pub get
 
-      - name: Build Release APK
-        run: flutter build apk --release --target lib/main.dart --dart-define=GEMINI_API_KEY="${{ secrets.GEMINI_API_KEY }}"
+      - name: Analyze project
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings
 
-      - name: Upload APK Artifact
+      - name: Build signed-by-debug-key release APK
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          set -euo pipefail
+          flutter build apk --release --target lib/main.dart --dart-define=GEMINI_API_KEY="$GEMINI_API_KEY"
+
+      - name: Verify APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK="build/app/outputs/flutter-apk/app-release.apk"
+          test -s "$APK"
+          file "$APK"
+          ls -lh "$APK"
+          mkdir -p release
+          cp "$APK" release/Faraz_Siddiqui_AI_Agent_v1.0.0.apk
+
+      - name: Upload verified APK
         uses: actions/upload-artifact@v4
         with:
-          name: faraz-siddiqui-ai-agent-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          name: Faraz-Siddiqui-AI-Agent-Release-APK
+          path: release/Faraz_Siddiqui_AI_Agent_v1.0.0.apk
           if-no-files-found: error
+          retention-days: 30
