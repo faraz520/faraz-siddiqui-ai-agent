@@ -26,10 +26,10 @@ jobs:
           java-version: '17'
           cache: gradle
 
-      - name: Set up Flutter stable
+      - name: Set up Flutter 3.35.7
         uses: subosito/flutter-action@v2
         with:
-          channel: stable
+          flutter-version: '3.35.7'
           cache: true
 
       - name: Generate Android platform files when missing
